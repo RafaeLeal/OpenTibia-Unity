@@ -16,7 +16,7 @@ if [ $LOCAL -eq 1 ]; then
 	export BUILD_PATH="$(pwd)/Builds/$BUILD_TARGET/"
 else
   load_license "./ci/Unity_v2019.x.ulf.encrypted"
-  before_script()
+  before_script
   export BUILD_PATH=/project/Builds/$BUILD_TARGET/
 fi
 
