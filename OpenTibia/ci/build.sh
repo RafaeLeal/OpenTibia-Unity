@@ -17,7 +17,6 @@ if [ $LOCAL -eq 1 ]; then
 else
   load_license "./ci/Unity_v2019.x.ulf.encrypted"
   before_script()
-  unset UNITY_LICENSE_CONTENT
   export BUILD_PATH=/project/Builds/$BUILD_TARGET/
 fi
 
