@@ -16,21 +16,23 @@ if [ $LOCAL -eq 1 ]; then
 	export BUILD_PATH="$(pwd)/Builds/$BUILD_TARGET/"
 else
   load_license "./ci/Unity_v2019.x.ulf.encrypted"
-	export BUILD_PATH=/project/Builds/$BUILD_TARGET/
+	echo $UNITY_LICENSE_CONTENT > ~/.local/share/unity3d/Unity/Unity_lic.ulf
+  unset UNITY_LICENSE_CONTENT
+  export BUILD_PATH=/project/Builds/$BUILD_TARGET/
 fi
 
 mkdir -p $BUILD_PATH
 
 ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity} \
-  -projectPath $(pwd) \
+  -projectPath "$(pwd)" \
   -quit \
   -batchmode \
-  -username "$UNITY_EMAIL" \
-  -password "$UNITY_PASSWORD" \
-  -buildTarget $BUILD_TARGET \
-  -customBuildTarget $BUILD_TARGET \
-  -customBuildName $BUILD_NAME \
-  -customBuildPath $BUILD_PATH \
+  # -username "$UNITY_EMAIL" \
+  # -password "$UNITY_PASSWORD" \
+  -buildTarget "$BUILD_TARGET" \
+  -customBuildTarget "$BUILD_TARGET" \
+  -customBuildName "$BUILD_NAME" \
+  -customBuildPath "$BUILD_PATH" \
   -executeMethod BuildCommand.PerformBuild \
   -logFile /dev/stdout
 
