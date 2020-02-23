@@ -5,6 +5,8 @@ set -x
 
 echo "Building for $BUILD_TARGET"
 
+echo $(echo $UNITY_LICENSE_CONTENT | wc -c)
+
 if [ $LOCAL -eq 1 ]; then 
 	export BUILD_PATH="$(pwd)/Builds/$BUILD_TARGET/"
 else
