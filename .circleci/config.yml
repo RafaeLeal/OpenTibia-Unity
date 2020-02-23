@@ -7,6 +7,8 @@ references:
   setup_unity_license_env_var: &setup_unity_license_env_var
     command: |
       openssl version
+      echo $(pwd)
+      echo $(ls -lah)
       openssl aes-256-cbc -md md5 -d -in ./ci/Unity_v2019.x.ulf.encrypted -out Unity_v2019.x.ulf -k $OPENTIBIA_CRYPT_KEY
       export UNITY_LICENSE_CONTENT=`cat Unity_v2019.x.ulf`
       rm Unity_v2019.x.ulf
