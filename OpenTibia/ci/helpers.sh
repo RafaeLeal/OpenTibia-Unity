@@ -16,6 +16,6 @@ function try() {
 function load_license() {
     local license_encrypted_filepath=$1
     openssl aes-256-cbc -md md5 -d -in $license_encrypted_filepath -out Unity_v2019.x.ulf -k $OPENTIBIA_CRYPT_KEY
-    export UNITY_LICENSE_CONTENT=`cat Unity_v2019.x.ulf`
+    export UNITY_LICENSE_CONTENT="$(cat Unity_v2019.x.ulf)"
     rm Unity_v2019.x.ulf
 }
