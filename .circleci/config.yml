@@ -70,11 +70,12 @@ jobs:
         name: setup-unity-license
         <<: *setup_unity_license_env_var
     - run:
+        working_directory: ~/project/OpenTibia
         environment:
           BUILD_TARGET: StandaloneOSX
         command: "./ci/build.sh"
     - store_artifacts:
-        path: "./Builds/"
+        path: "~/project/OpenTibia/Builds/"
 workflows:
   version: 2
   test_and_build:
