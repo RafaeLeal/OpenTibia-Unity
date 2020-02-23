@@ -16,6 +16,7 @@ if [ $LOCAL -eq 1 ]; then
 	export BUILD_PATH="$(pwd)/Builds/$BUILD_TARGET/"
 else
   load_license "./ci/Unity_v2019.x.ulf.encrypted"
+  mkdir -p ~/.local/share/unity3d/Unity/ 
 	echo $UNITY_LICENSE_CONTENT > ~/.local/share/unity3d/Unity/Unity_lic.ulf
   unset UNITY_LICENSE_CONTENT
   export BUILD_PATH=/project/Builds/$BUILD_TARGET/
