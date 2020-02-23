@@ -77,7 +77,8 @@ workflows:
     jobs:
     # - test_editmode
     # - test_playmode
-    - build_StandaloneOSX
+    - build_StandaloneOSX:
+        context: OpenTibia
   # build:
 # following is untested, but deploying to github-pages from CircleCI should look like this:
 #  deploy_pages:
