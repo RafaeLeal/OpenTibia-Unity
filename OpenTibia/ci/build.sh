@@ -4,12 +4,18 @@ set -e
 set -x
 
 echo "Building for $BUILD_TARGET"
+cur_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null && pwd )"
+
+echo $cur_dir
+source "$cur_dir/helpers.sh"
 
 echo $(echo $UNITY_LICENSE_CONTENT | wc -c)
+export LOCAL="${LOCAL:-0}"
 
 if [ $LOCAL -eq 1 ]; then 
 	export BUILD_PATH="$(pwd)/Builds/$BUILD_TARGET/"
 else
+  load_license "./ci/Unity_v2019.x.ulf.encrypted"
 	export BUILD_PATH=/project/Builds/$BUILD_TARGET/
 fi
 
