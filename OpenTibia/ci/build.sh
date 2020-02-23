@@ -26,8 +26,8 @@ ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x2
   -projectPath "$(pwd)" \
   -quit \
   -batchmode \
-  -username "$UNITY_EMAIL" \
-  -password "$UNITY_PASSWORD" \
+  # -username "$UNITY_EMAIL" \
+  # -password "$UNITY_PASSWORD" \
   -buildTarget "$BUILD_TARGET" \
   -customBuildTarget "$BUILD_TARGET" \
   -customBuildName "$BUILD_NAME" \
