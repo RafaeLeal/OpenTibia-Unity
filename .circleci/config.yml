@@ -66,12 +66,13 @@ jobs:
     # - run:
     #     command: apt-get update && apt-get install -y git && git --version
     - checkout
-    - run:
-        name: setup-unity-license
-        <<: *setup_unity_license_env_var
+    # - run:
+    #     name: setup-unity-license
+    #     <<: *setup_unity_license_env_var
     - run:
         working_directory: ~/project/OpenTibia
         environment:
+          BUILD_NAME: OpenTibia-Unity-RafaeLeal
           BUILD_TARGET: StandaloneOSX
         command: "./ci/build.sh"
     - store_artifacts:
