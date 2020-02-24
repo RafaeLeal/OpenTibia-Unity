@@ -32,6 +32,7 @@ function build() {
   -quit \
   -batchmode \
   -buildTarget "$BUILD_TARGET" \
+  -manualLicenseFile "$LICENSE_FILE" \ 
   -customBuildTarget "$BUILD_TARGET" \
   -customBuildName "$BUILD_NAME" \
   -customBuildPath "$BUILD_PATH" \
