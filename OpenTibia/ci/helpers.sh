@@ -39,8 +39,9 @@ function before_script() {
         fi
     fi
 
-    echo "Writing UNITY_LICENSE_CONTENT to license file /root/.local/share/unity3d/Unity/Unity_lic.ulf"
-    echo "$UNITY_LICENSE_CONTENT" | tr -d '\r' > /root/.local/share/unity3d/Unity/Unity_lic.ulf
+    export LICENSE_FILE="$HOME/.local/share/unity3d/Unity/Unity_lic.ulf"
+    echo "Writing UNITY_LICENSE_CONTENT to license file $LICENSE_FILE"
+    echo "$UNITY_LICENSE_CONTENT" | tr -d '\r' > $LICENSE_FILE 
 
     set -x
 

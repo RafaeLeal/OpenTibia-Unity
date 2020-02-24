@@ -22,7 +22,8 @@ fi
 
 mkdir -p $BUILD_PATH
 function unity3d_runner() {
-  ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity} "$@"
+  DOCKER_UNITY_EXECUTABLE="/opt/Unity/Editor/Unity"
+  ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' $DOCKER_UNITY_EXECUTABLE} "$@"
 }
 
 function build() {
@@ -30,6 +31,7 @@ function build() {
   -projectPath "$(pwd)" \
   -quit \
   -batchmode \
+  -manualLicenseFile "$LICENSE_FILE" \
   -buildTarget "$BUILD_TARGET" \
   -customBuildTarget "$BUILD_TARGET" \
   -customBuildName "$BUILD_NAME" \
@@ -40,9 +42,6 @@ function build() {
   UNITY_EXIT_CODE=$?
 }
 
-build & 
-sleep 10
-pkill /opt/Unity/Editor/Unity 
 build
 
 if [ $UNITY_EXIT_CODE -eq 0 ]; then
