@@ -42,7 +42,7 @@ function build() {
 
 build & 
 sleep 10
-killall -9 /opt/Unity/Editor/Unity 
+pkill /opt/Unity/Editor/Unity 
 build
 
 if [ $UNITY_EXIT_CODE -eq 0 ]; then
