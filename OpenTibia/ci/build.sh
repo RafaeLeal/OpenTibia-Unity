@@ -31,7 +31,6 @@ function build() {
   -projectPath "$(pwd)" \
   -quit \
   -batchmode \
-  -manualLicenseFile "$LICENSE_FILE" \
   -buildTarget "$BUILD_TARGET" \
   -customBuildTarget "$BUILD_TARGET" \
   -customBuildName "$BUILD_NAME" \
@@ -42,6 +41,18 @@ function build() {
   UNITY_EXIT_CODE=$?
 }
 
+function unity_load_license() {
+  unity3d_runner \
+  -projectPath "$(pwd)" \
+  -quit \
+  -batchmode \
+  -manualLicenseFile "$LICENSE_FILE" \
+  -logFile /dev/stdout
+
+  UNITY_EXIT_CODE=$?
+}
+
+unity_load_license || true
 build
 
 if [ $UNITY_EXIT_CODE -eq 0 ]; then
