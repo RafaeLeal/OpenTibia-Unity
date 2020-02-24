@@ -21,8 +21,12 @@ else
 fi
 
 mkdir -p $BUILD_PATH
+function unity3d_runner() {
+  ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity} "$@"
+}
 
-${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity} \
+function build() {
+  unity3d_runner \
   -projectPath "$(pwd)" \
   -quit \
   -batchmode \
@@ -33,7 +37,13 @@ ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x2
   -executeMethod BuildCommand.PerformBuild \
   -logFile /dev/stdout
 
-UNITY_EXIT_CODE=$?
+  UNITY_EXIT_CODE=$?
+}
+
+build 
+sleep 10
+killall -9 /opt/Unity/Editor/Unity 
+build
 
 if [ $UNITY_EXIT_CODE -eq 0 ]; then
   echo "Run succeeded, no failures occurred";
