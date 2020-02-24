@@ -31,13 +31,14 @@ function build() {
   -projectPath "$(pwd)" \
   -quit \
   -batchmode \
+  -silent-crashes \
   -buildTarget "$BUILD_TARGET" \
   -manualLicenseFile "$LICENSE_FILE" \ 
   -customBuildTarget "$BUILD_TARGET" \
   -customBuildName "$BUILD_NAME" \
   -customBuildPath "$BUILD_PATH" \
-  -executeMethod BuildCommand.PerformBuild \
-  -logFile /dev/stdout
+  -logFile - \
+  -executeMethod BuildCommand.PerformBuild
 
   UNITY_EXIT_CODE=$?
 }
@@ -47,6 +48,7 @@ function unity_load_license() {
   -projectPath "$(pwd)" \
   -quit \
   -batchmode \
+  -silent-crashes \
   -manualLicenseFile "$LICENSE_FILE" \
   -logFile /dev/stdout
 
