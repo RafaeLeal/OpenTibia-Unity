@@ -40,7 +40,7 @@ function build() {
   UNITY_EXIT_CODE=$?
 }
 
-build 
+build & 
 sleep 10
 killall -9 /opt/Unity/Editor/Unity 
 build
