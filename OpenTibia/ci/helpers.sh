@@ -15,34 +15,13 @@ function try() {
 
 function load_license() {
     local license_encrypted_filepath=$1
-    openssl aes-256-cbc -md md5 -d -in $license_encrypted_filepath -out Unity_v2019.x.ulf -k $OPENTIBIA_CRYPT_KEY
+    local encryption_key=$2
+    openssl enc -aes-256-cbc -d -in $license_encrypted_filepath -k $encryption_key > Unity_v2019.x.ulf
     export UNITY_LICENSE_CONTENT="$(cat Unity_v2019.x.ulf)"
-    rm Unity_v2019.x.ulf
-}
+    cat Unity_v2019.x.ulf | sha1sum -c ./ci/unity_lic.sha1sum
 
-function before_script() {
-    set -x
-    mkdir -p /root/.cache/unity3d
-    mkdir -p /root/.local/share/unity3d/Unity/
-    set +x
-
-    UPPERCASE_BUILD_TARGET=${BUILD_TARGET^^};
-
-    if [ $UPPERCASE_BUILD_TARGET = "ANDROID" ]
-    then
-        if [ -n $ANDROID_KEYSTORE_BASE64 ]
-        then
-            echo '$ANDROID_KEYSTORE_BASE64 found, decoding content into keystore.keystore'
-            echo $ANDROID_KEYSTORE_BASE64 | base64 --decode > keystore.keystore
-        else
-            echo '$ANDROID_KEYSTORE_BASE64'" env var not found, building with Unity's default debug keystore"
-        fi
-    fi
-
+    mkdir -p ~/.cache/unity3d
+    mkdir -p ~/.local/share/unity3d/Unity/
     export LICENSE_FILE="$HOME/.local/share/unity3d/Unity/Unity_lic.ulf"
-    echo "Writing UNITY_LICENSE_CONTENT to license file $LICENSE_FILE"
-    echo "$UNITY_LICENSE_CONTENT" | tr -d '\r' > $LICENSE_FILE 
-
-    set -x
-
+    mv Unity_v2019.x.ulf $LICENSE_FILE
 }

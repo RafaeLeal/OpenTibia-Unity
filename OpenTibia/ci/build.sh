@@ -1,22 +1,17 @@
 #!/usr/bin/env bash
-#set -eou pipefail
-set -e
-set -x
+set -eou pipefail
 
 echo "Building for $BUILD_TARGET"
 cur_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null && pwd )"
 
-echo $cur_dir
 source "$cur_dir/helpers.sh"
 
-echo $(echo $UNITY_LICENSE_CONTENT | wc -c)
 export LOCAL="${LOCAL:-0}"
 
 if [ $LOCAL -eq 1 ]; then 
 	export BUILD_PATH="$(pwd)/Builds/$BUILD_TARGET/"
 else
-  load_license "./ci/Unity_v2019.x.ulf.encrypted"
-  before_script
+  load_license "./ci/Unity_v2019.x.ulf.encrypted" $OPENTIBIA_CRYPT_KEY
   export BUILD_PATH=/project/Builds/$BUILD_TARGET/
 fi
 
@@ -27,24 +22,11 @@ function unity3d_runner() {
 }
 
 function build() {
-  unity3d_runner -projectPath "$(pwd)" -quit -batchmode -silent-crashes -buildTarget "$BUILD_TARGET" -manualLicenseFile "$LICENSE_FILE" -customBuildTarget "$BUILD_TARGET" -customBuildName "$BUILD_NAME" -customBuildPath "$BUILD_PATH" -logFile /dev/stdout -executeMethod BuildCommand.PerformBuild
+  unity3d_runner -projectPath "$(pwd)" -quit -batchmode -silent-crashes -buildTarget "$BUILD_TARGET" -customBuildTarget "$BUILD_TARGET" -customBuildName "$BUILD_NAME" -customBuildPath "$BUILD_PATH" -logFile /dev/stdout -executeMethod BuildCommand.PerformBuild
 
   UNITY_EXIT_CODE=$?
 }
 
-function unity_load_license() {
-  unity3d_runner \
-  -projectPath "$(pwd)" \
-  -quit \
-  -batchmode \
-  -silent-crashes \
-  -manualLicenseFile "$LICENSE_FILE" \
-  -logFile /dev/stdout
-
-  UNITY_EXIT_CODE=$?
-}
-
-unity_load_license || true
 build
 
 if [ $UNITY_EXIT_CODE -eq 0 ]; then

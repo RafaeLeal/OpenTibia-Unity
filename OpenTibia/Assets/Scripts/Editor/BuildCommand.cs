@@ -3,13 +3,18 @@ using System.Linq;
 using System;
 using System.IO;
 
-static class BuildCommand
+public static class BuildCommand
 {
     private const string KEYSTORE_PASS  = "KEYSTORE_PASS";
     private const string KEY_ALIAS_PASS = "KEY_ALIAS_PASS";
     private const string KEY_ALIAS_NAME = "KEY_ALIAS_NAME";
     private const string KEYSTORE       = "keystore.keystore";
     private const string BUILD_OPTIONS_ENV_VAR = "BuildOptions";
+
+    public static void HelloWorld() 
+    {
+        Console.WriteLine("Hello World!");
+    }
 
     static string GetArgument(string name)
     {
