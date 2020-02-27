@@ -76,7 +76,7 @@ jobs:
           BUILD_TARGET: StandaloneOSX
         command: "./ci/build.sh"
     - store_artifacts:
-        path: "~/project/OpenTibia/Builds/"
+        path: "/project/Builds/StandaloneOSX/"
 workflows:
   version: 2
   test_and_build:
