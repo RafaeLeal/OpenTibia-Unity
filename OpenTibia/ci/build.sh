@@ -27,7 +27,7 @@ function build() {
   UNITY_EXIT_CODE=$?
 }
 
-build
+build || true
 sleep 20
 build
 
