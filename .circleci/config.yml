@@ -60,15 +60,34 @@ jobs:
     #     command: "./ci/build.sh"
     # - store_artifacts:
     #     path: "./Builds/"
-  build_StandaloneOSX:
+  build-windows:
     <<: *docker_image
     steps:
-    # - run:
-    #     command: apt-get update && apt-get install -y git && git --version
     - checkout
-    # - run:
-    #     name: setup-unity-license
-    #     <<: *setup_unity_license_env_var
+    - run:
+        working_directory: ~/project/OpenTibia
+        environment:
+          BUILD_NAME: OpenTibia-Unity-RafaeLeal
+          BUILD_TARGET: StandaloneWindows64
+        command: "./ci/build.sh"
+    - store_artifacts:
+        path: "/project/Builds/StandaloneWindows64/"
+  build-linux:
+    <<: *docker_image
+    steps:
+    - checkout
+    - run:
+        working_directory: ~/project/OpenTibia
+        environment:
+          BUILD_NAME: OpenTibia-Unity-RafaeLeal
+          BUILD_TARGET: StandaloneLinux64
+        command: "./ci/build.sh"
+    - store_artifacts:
+        path: "/project/Builds/StandaloneLinux64/"
+  build-macos:
+    <<: *docker_image
+    steps:
+    - checkout
     - run:
         working_directory: ~/project/OpenTibia
         environment:
@@ -83,7 +102,11 @@ workflows:
     jobs:
     # - test_editmode
     # - test_playmode
-    - build_StandaloneOSX:
+    - build-linux:
+        context: OpenTibia
+    - build-windows:
+        context: OpenTibia
+    - build-macos:
         context: OpenTibia
   # build:
 # following is untested, but deploying to github-pages from CircleCI should look like this:
