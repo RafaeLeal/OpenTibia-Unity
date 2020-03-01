@@ -28,6 +28,8 @@ function build() {
 }
 
 build
+sleep 20
+build
 
 if [ $UNITY_EXIT_CODE -eq 0 ]; then
   echo "Run succeeded, no failures occurred";
