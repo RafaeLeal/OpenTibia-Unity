@@ -7,7 +7,7 @@ cur_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null && pwd )"
 source "$cur_dir/helpers.sh"
 
 
-if [ $BUILD_TARGET ~= "Windows" ]; then
+if [[ $BUILD_TARGET ~= "Windows" ]]; then
   echo "Loading Windows License"
   load_license "./ci/Unity_v2019.1.12.ulf.encrypted" $OPENTIBIA_CRYPT_KEY
 else 
