@@ -13,6 +13,10 @@ function try() {
     echo "$ $@" 1>&2; "$@" || die "cannot $*";
 }
 
+function try_and_continue() {
+    echo "$ $@" 1>&2; "$@" || yell "cannot $*";
+}
+
 function load_license() {
     local license_encrypted_filepath=$1
     local encryption_key=$2
