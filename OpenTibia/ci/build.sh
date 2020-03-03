@@ -9,10 +9,10 @@ source "$cur_dir/helpers.sh"
 
 if [[ $BUILD_TARGET =~ "Windows" ]]; then
   echo "Loading Windows License"
-  local license="./ci/Unity_v2019.1.12.ulf"
+  license="./ci/Unity_v2019.1.12.ulf"
 else 
   echo "Loading Unix License"
-  local license="./ci/Unity_v2019.x.ulf"
+  license="./ci/Unity_v2019.x.ulf"
 fi
 
 load_license "$license.encrypted" "$license.sha1sum" $OPENTIBIA_CRYPT_KEY
