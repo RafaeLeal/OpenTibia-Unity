@@ -9,6 +9,7 @@ jobs:
     steps:
     - checkout
     - run:
+        working_directory: ~/project/OpenTibia
         environment:
           TEST_PLATFORM: editmode
         command: "./ci/test.sh"
@@ -20,6 +21,7 @@ jobs:
     steps:
     - checkout
     - run:
+        working_directory: ~/project/OpenTibia
         environment:
           TEST_PLATFORM: playmode
         command: "./ci/test.sh"
