@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
-
-set -x
+set -eou pipefail
 
 echo "Testing for $TEST_PLATFORM"
+cur_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null && pwd )"
 
-${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' /opt/Unity/Editor/Unity} \
-  -projectPath $(pwd) \
-  -runTests \
-  -testPlatform $TEST_PLATFORM \
-  -testResults $(pwd)/$TEST_PLATFORM-results.xml \
-  -logFile /dev/stdout \
-  -batchmode
+source "$cur_dir/helpers.sh"
+
+license="./ci/Unity_v2019.x.ulf"
+load_license "$license.encrypted" "$license.sha1sum" $OPENTIBIA_CRYPT_KEY
+
+try_and_continue unity3d_runner -projectPath $(pwd) -runTests -testPlatform $TEST_PLATFORM -testResults $(pwd)/$TEST_PLATFORM-results.xml -logFile /dev/stdout -batchmode
 
 UNITY_EXIT_CODE=$?
 

@@ -19,10 +19,6 @@ load_license "$license.encrypted" "$license.sha1sum" $OPENTIBIA_CRYPT_KEY
 export BUILD_PATH=/project/Builds/$BUILD_TARGET/
 
 mkdir -p $BUILD_PATH
-function unity3d_runner() {
-  DOCKER_UNITY_EXECUTABLE="/opt/Unity/Editor/Unity"
-  ${UNITY_EXECUTABLE:-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' $DOCKER_UNITY_EXECUTABLE} "$@"
-}
 
 function build() {
   try unity3d_runner -projectPath "$(pwd)" -quit -batchmode -silent-crashes -buildTarget "$BUILD_TARGET" -customBuildTarget "$BUILD_TARGET" -customBuildName "$BUILD_NAME" -customBuildPath "$BUILD_PATH" -logFile /dev/stdout -executeMethod BuildCommand.PerformBuild
