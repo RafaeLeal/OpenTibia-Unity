@@ -6,7 +6,7 @@
 Assets/AssetStoreTools*
 
 # JetBrains Rider
-Assets/Plugins/Editor/JetBrains/
+Assets/Plugins/Editor/JetBrains/*.dll
 
 # Visual Studio cache directory
 .vs/
