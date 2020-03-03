@@ -19,13 +19,13 @@ function try_and_continue() {
 
 function load_license() {
     local license_encrypted_filepath=$1
-    local encryption_key=$2
+    local license_sha1sum=$2
+    local encryption_key=$3
     openssl enc -aes-256-cbc -d -in $license_encrypted_filepath -k $encryption_key > Unity_v2019.x.ulf
     export UNITY_LICENSE_CONTENT="$(cat Unity_v2019.x.ulf)"
-    # cat Unity_v2019.x.ulf | sha1sum -c ./ci/unity_lic.sha1sum
 
     mkdir -p ~/.cache/unity3d
     mkdir -p ~/.local/share/unity3d/Unity/
-    export LICENSE_FILE="$HOME/.local/share/unity3d/Unity/Unity_lic.ulf"
-    mv Unity_v2019.x.ulf $LICENSE_FILE
+    mv Unity_v2019.x.ulf "$HOME/.local/share/unity3d/Unity/Unity_lic.ulf"
+    sha1sum -c $license_sha1sum 
 }

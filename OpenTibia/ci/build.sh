@@ -9,12 +9,13 @@ source "$cur_dir/helpers.sh"
 
 if [[ $BUILD_TARGET =~ "Windows" ]]; then
   echo "Loading Windows License"
-  load_license "./ci/Unity_v2019.1.12.ulf.encrypted" $OPENTIBIA_CRYPT_KEY
+  local license="./ci/Unity_v2019.1.12.ulf"
 else 
   echo "Loading Unix License"
-  load_license "./ci/Unity_v2019.x.ulf.encrypted" $OPENTIBIA_CRYPT_KEY
+  local license="./ci/Unity_v2019.x.ulf"
 fi
 
+load_license "$license.encrypted" "$license.sha1sum" $OPENTIBIA_CRYPT_KEY
 export BUILD_PATH=/project/Builds/$BUILD_TARGET/
 
 mkdir -p $BUILD_PATH
