@@ -40,7 +40,7 @@ jobs:
           BUILD_TARGET: StandaloneWindows64
         command: "./ci/build.sh"
     - store_artifacts:
-        path: "/project/Builds/StandaloneWindows64/"
+        path: "/project/Builds/StandaloneWindows64.zip"
   build-linux:
     <<: *docker_image
     steps:
@@ -52,7 +52,7 @@ jobs:
           BUILD_TARGET: StandaloneLinux64
         command: "./ci/build.sh"
     - store_artifacts:
-        path: "/project/Builds/StandaloneLinux64/"
+        path: "/project/Builds/StandaloneLinux64.zip"
   build-macos:
     <<: *docker_image
     steps:
@@ -64,7 +64,7 @@ jobs:
           BUILD_TARGET: StandaloneOSX
         command: "./ci/build.sh"
     - store_artifacts:
-        path: "/project/Builds/StandaloneOSX/"
+        path: "/project/Builds/StandaloneOSX.zip"
 workflows:
   version: 2
   test-and-build:

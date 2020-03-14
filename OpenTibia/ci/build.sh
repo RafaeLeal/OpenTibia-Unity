@@ -41,3 +41,5 @@ fi
 try ls -la /project/Builds/
 try ls -la $BUILD_PATH
 [ -n "$(ls -A $BUILD_PATH)" ] # fail job if build folder is empty
+
+try zip -r /project/Builds/${BUILD_TARGET}.zip $BUILD_PATH
