@@ -42,4 +42,6 @@ try ls -la /project/Builds/
 try ls -la $BUILD_PATH
 [ -n "$(ls -A $BUILD_PATH)" ] # fail job if build folder is empty
 
+
+try apt update && apt install -y zip
 try zip -r /project/Builds/${BUILD_TARGET}.zip $BUILD_PATH
