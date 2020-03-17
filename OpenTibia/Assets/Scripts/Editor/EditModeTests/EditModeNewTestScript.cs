@@ -1,10 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using NUnit.Framework;
-using UnityEngine;
+using OpenTibiaUnity.Api;
 using UnityEngine.TestTools;
 
-namespace EditModeTests
+namespace OpenTibiaUnity.Editor.EditModeTests
 {
     public class EditModeNewTestScript
     {
@@ -13,6 +12,7 @@ namespace EditModeTests
         public void EditNewTestScriptSimplePasses()
         {
             // Use the Assert class to test conditions
+            var spec = new RafaeLealOpenTibiaSpecApiLocal();
         }
 
         // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
