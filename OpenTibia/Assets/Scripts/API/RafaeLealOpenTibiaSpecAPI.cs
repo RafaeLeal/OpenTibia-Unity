@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 namespace OpenTibiaUnity.Api
 {
 
-    public class Character
+    public class LoginCharacter
     {
         
     }
@@ -17,9 +17,9 @@ namespace OpenTibiaUnity.Api
         [CanBeNull] public string Message { get; set; }
     }
 
-    public class CharacterList : LoginResult
+    public class LoginCharacterList : LoginResult
     {
-        public List<Character> Characters = new List<Character>();
+        public List<LoginCharacter> Characters = new List<LoginCharacter>();
     }
 
     public class LoginInfo

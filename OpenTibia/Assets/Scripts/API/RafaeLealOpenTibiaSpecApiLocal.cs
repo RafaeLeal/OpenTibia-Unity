@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace OpenTibiaUnity.Api
@@ -6,10 +7,16 @@ namespace OpenTibiaUnity.Api
     {
         public async Task<LoginResult> Login(LoginInfo loginInfo)
         {
-            if (loginInfo.Email == "local@here.me" &&
+            if (loginInfo.Email == "1234" &&
                 loginInfo.Password == "1234")
             {
-                return new CharacterList() { };
+                return new LoginCharacterList()
+                {
+                    Characters = new List<LoginCharacter>()
+                    {
+                        new LoginCharacter()
+                    }
+                };
             }
 
             return new LoginError()

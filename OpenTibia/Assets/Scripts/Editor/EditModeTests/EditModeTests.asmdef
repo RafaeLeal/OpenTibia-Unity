@@ -1,9 +1,19 @@
-﻿{
+{
     "name": "EditModeTests",
+    "references": [
+        "GUID:6f3e53a083c304a60b007e50e24d9367"
+    ],
     "optionalUnityReferences": [
         "TestAssemblies"
     ],
     "includePlatforms": [
         "Editor"
-    ]
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
 }

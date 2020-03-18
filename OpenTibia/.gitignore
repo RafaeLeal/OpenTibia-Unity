@@ -59,3 +59,9 @@ Icon?
 ehthumbs.db
 [Tt]humbs.db
 [Dd]esktop.ini
+
+# Opentibia
+*.otud
+*.otus
+*.otud.meta
+*.otus.meta
