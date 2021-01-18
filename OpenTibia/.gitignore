@@ -5,6 +5,9 @@
 [Bb]uilds/
 Assets/AssetStoreTools*
 
+# JetBrains Rider
+Assets/Plugins/Editor/JetBrains/*.dll
+
 # Visual Studio cache directory
 .vs/
 
@@ -56,3 +59,9 @@ Icon?
 ehthumbs.db
 [Tt]humbs.db
 [Dd]esktop.ini
+
+# Opentibia
+*.otud
+*.otus
+*.otud.meta
+*.otus.meta

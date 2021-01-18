@@ -1,0 +1,90 @@
+version: 2
+references:
+  docker_image: &docker_image
+    docker:
+    - image: gableroux/unity3d:2019.1.8f1-mac-add-2017-4-29f1-2018-4-3f1-2019-1-8f1 
+jobs:
+  test-editmode:
+    <<: *docker_image
+    steps:
+    - checkout
+    - run:
+        working_directory: ~/project/OpenTibia
+        environment:
+          TEST_PLATFORM: editmode
+        command: "./ci/test.sh"
+    - store_artifacts:
+        path: "$(pwd)/$TEST_PLATFORM-results.xml"
+        destination: "$TEST_PLATFORM-results.xml"
+  test-playmode:
+    <<: *docker_image
+    steps:
+    - checkout
+    - run:
+        working_directory: ~/project/OpenTibia
+        environment:
+          TEST_PLATFORM: playmode
+        command: "./ci/test.sh"
+    - store_artifacts:
+        path: "$(pwd)/$TEST_PLATFORM-results.xml"
+        destination: "$TEST_PLATFORM-results.xml"
+  build-windows:
+    docker:
+    - image: gableroux/unity3d:2019.1.12f1-windows
+    steps:
+    - checkout
+    - run:
+        working_directory: ~/project/OpenTibia
+        environment:
+          BUILD_NAME: OpenTibia-Unity-RafaeLeal
+          BUILD_TARGET: StandaloneWindows64
+        command: "./ci/build.sh"
+    - store_artifacts:
+        path: "/project/Builds/StandaloneWindows64.zip"
+  build-linux:
+    <<: *docker_image
+    steps:
+    - checkout
+    - run:
+        working_directory: ~/project/OpenTibia
+        environment:
+          BUILD_NAME: OpenTibia-Unity-RafaeLeal
+          BUILD_TARGET: StandaloneLinux64
+        command: "./ci/build.sh"
+    - store_artifacts:
+        path: "/project/Builds/StandaloneLinux64.zip"
+  build-macos:
+    <<: *docker_image
+    steps:
+    - checkout
+    - run:
+        working_directory: ~/project/OpenTibia
+        environment:
+          BUILD_NAME: OpenTibia-Unity-RafaeLeal
+          BUILD_TARGET: StandaloneOSX
+        command: "./ci/build.sh"
+    - store_artifacts:
+        path: "/project/Builds/StandaloneOSX.zip"
+workflows:
+  version: 2
+  test-and-build:
+    jobs:
+    - test-editmode:
+        context: OpenTibia
+    - test-playmode:
+        context: OpenTibia
+    - build-linux:
+        context: OpenTibia
+        requires:
+          - test-editmode
+          - test-playmode
+    - build-windows:
+        context: OpenTibia
+        requires:
+          - test-editmode
+          - test-playmode
+    - build-macos:
+        context: OpenTibia
+        requires:
+          - test-editmode
+          - test-playmode

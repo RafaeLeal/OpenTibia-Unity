@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using OpenTibiaUnity.Core.Communication.Login;
 using System.Threading.Tasks;
+using OpenTibiaUnity.Api;
 
 namespace OpenTibiaUnity.Modules.Login
 {
@@ -47,9 +48,10 @@ namespace OpenTibiaUnity.Modules.Login
         protected string _protocolAccountIdentifier = string.Empty;
         protected string _protocolPassword = string.Empty;
         protected string _protocolToken = string.Empty;
-
+        
         protected ProtocolLogin _protocolLogin = null;
         protected LoginWebClient _loginWebClient = null;
+        protected IRafaeLealOpenTibiaSpecApi _openTibiaSpec = null;
 
         protected Core.Components.PopupWindow _popupWindow;
         protected bool _popupIsMOTD = false;
@@ -71,10 +73,11 @@ namespace OpenTibiaUnity.Modules.Login
             get => _addressInput.text;
             set => _addressInput.text = value;
         }
-
+        
         protected override void Awake() {
             base.Awake();
 
+            _openTibiaSpec = new RafaeLealOpenTibiaSpecApiLocal();
             // setup input
             OpenTibiaUnity.InputHandler.AddKeyDownListener(Core.Utils.EventImplPriority.High, OnKeyDown);
         }
@@ -453,29 +456,19 @@ namespace OpenTibiaUnity.Modules.Login
             _popupWindow.SetMessage(message, 500, 250);
         }
 
-        protected async void DoLogin(string accountIdentifier, string password, string token, string address) {
-            _protocolAccountIdentifier = accountIdentifier;
-            _protocolPassword = password;
-            _protocolToken = token;
-
-            AcccountIdentifier = string.Empty;
-            Password = string.Empty;
-            Token = string.Empty;
-
-            OpenTibiaUnity.OptionStorage.LoginAddress = address;
-
+        private async Task LoadResources(string accountIdentifier, string password, string token, string address)
+        {
             var gameManager = OpenTibiaUnity.GameManager;
             int clientVersion = gameManager.ClientVersion;
             int buildVersion = gameManager.BuildVersion;
-
             var specification = ClientSpecification.OpenTibia;
 
             string versionLiteral;
             if (clientVersion >= 1100)
                 versionLiteral = $"{clientVersion}.{buildVersion}";
             else
-                versionLiteral = clientVersion.ToString();
-
+                versionLiteral = clientVersion.ToString(); 
+            
             if (clientVersion >= 1200) {
                 if (address.ToLower() == "cipsoft")
                     specification = ClientSpecification.Cipsoft;
@@ -497,49 +490,83 @@ namespace OpenTibiaUnity.Modules.Login
                 }
 
                 gameManager.LoadThingsAsync(clientVersion, buildVersion, specification);
-            }
-
+            } 
             gameManager.SetClientSpecification(specification);
-            if (clientVersion >= 1100) {
-                _loginWebClient = new LoginWebClient(clientVersion, buildVersion) {
-                    AccountIdentifier = _protocolAccountIdentifier,
-                    Password = _protocolPassword,
-                    Token = _protocolToken,
-                };
+        }
+        
+        protected async void DoLogin(string accountIdentifier, string password, string token, string address) {
+            _protocolAccountIdentifier = accountIdentifier;
+            _protocolPassword = password;
+            _protocolToken = token;
 
-                if (specification == ClientSpecification.Cipsoft)
-                    address = Constants.RealTibiaClientServicesAddress;
-                else if (address.Length == 0)
-                    address = Constants.OpenTibiaDefaultClientServicesAddress;
-                
-                AddLoginWebClientListeners();
-                new Task(() => _loginWebClient.LoadDataAsync(address)).Start();
-            } else {
-                string ip;
-                int port = 0;
-                
-                if (address.Length != 0) {
-                    var split = address.Split(':');
-                    ip = split[0];
-                    if (split.Length < 2 || !int.TryParse(split[1], out port))
-                        port = Constants.OpenTibiaDefaultPort;
-                } else {
-                    ip = Constants.OpenTibiaDefaultIPAddress;
-                    port = Constants.OpenTibiaDefaultPort;
-                }
-                
-                _protocolLogin = new ProtocolLogin() {
-                    AccountName = _protocolAccountIdentifier,
-                    Password = _protocolPassword,
-                    Token = _protocolToken
-                };
+            AcccountIdentifier = string.Empty;
+            Password = string.Empty;
+            Token = string.Empty;
 
-                AddProtocolLoginListners();
-                new Task(() => _protocolLogin.Connect(ip, port)).Start();
-            }
+            OpenTibiaUnity.OptionStorage.LoginAddress = address;
 
+            var gameManager = OpenTibiaUnity.GameManager;
+            int clientVersion = gameManager.ClientVersion;
+            int buildVersion = gameManager.BuildVersion;
+
+            await LoadResources(accountIdentifier, password, token, address); 
+
+            // if (clientVersion >= 1100) {
+            //     _loginWebClient = new LoginWebClient(clientVersion, buildVersion) {
+            //         AccountIdentifier = _protocolAccountIdentifier,
+            //         Password = _protocolPassword,
+            //         Token = _protocolToken,
+            //     };
+            //
+            //     if (gameManager.ClientSpecification == ClientSpecification.Cipsoft)
+            //         address = Constants.RealTibiaClientServicesAddress;
+            //     else if (address.Length == 0)
+            //         address = Constants.OpenTibiaDefaultClientServicesAddress;
+            //     
+            //     AddLoginWebClientListeners();
+            //     new Task(() => _loginWebClient.LoadDataAsync(address)).Start();
+            // } else {
+            //     string ip;
+            //     int port = 0;
+            //     
+            //     if (address.Length != 0) {
+            //         var split = address.Split(':');
+            //         ip = split[0];
+            //         if (split.Length < 2 || !int.TryParse(split[1], out port))
+            //             port = Constants.OpenTibiaDefaultPort;
+            //     } else {
+            //         ip = Constants.OpenTibiaDefaultIPAddress;
+            //         port = Constants.OpenTibiaDefaultPort;
+            //     }
+            //     
+            //     _protocolLogin = new ProtocolLogin() {
+            //         AccountName = _protocolAccountIdentifier,
+            //         Password = _protocolPassword,
+            //         Token = _protocolToken
+            //     };
+            //
+            //     AddProtocolLoginListners();
+            //     new Task(() => _protocolLogin.Connect(ip, port)).Start();
+            // }
+            
             gameObject.SetActive(clientVersion >= 1100);
             PopupCancel("Connecting", "Your character list is being loaded. Please wait.");
+            
+            var loginResult = await _openTibiaSpec.Login(new LoginInfo()
+            {
+                AccountId = null,
+                Email = accountIdentifier,
+                Password = password
+            });
+            switch (loginResult)
+            {
+                case LoginError err:
+                    OnProtocolLoginError(err.Message);
+                    break;
+                case LoginCharacterList list:
+                    OnProtocolLoginCharacterList(LoginAdapter.toCommunicationLoginCharacterList(list));
+                    break;
+            }
         }
 
         public void DoLoginWithNewToken(string token) {
