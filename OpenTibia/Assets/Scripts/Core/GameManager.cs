@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using OpenTibiaUnity.Api;
 
 namespace OpenTibiaUnity.Core
 {
@@ -28,6 +29,7 @@ namespace OpenTibiaUnity.Core
         /// </summary>
         public static GameManager Instance { get; private set; }
 
+        public IRafaeLealOpenTibiaSpecApi OpenTibiaSpec { get; set; }
         [System.NonSerialized] public Material InternalColoredMaterial;
 
 #if !UNITY_EDITOR && UNITY_STANDALONE_WIN
@@ -223,6 +225,7 @@ namespace OpenTibiaUnity.Core
 
             // setup static fields
             Instance = this;
+            OpenTibiaSpec = new RafaeLealOpenTibiaSpecApiLocal();
             MainThread = Thread.CurrentThread;
 
             OpenTibiaUnity.GraphicsVendor = SystemInfo.graphicsDeviceVendor;

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace OpenTibiaUnity.Api
 {
@@ -10,6 +11,7 @@ namespace OpenTibiaUnity.Api
             if (loginInfo.Email == "1234" &&
                 loginInfo.Password == "1234")
             {
+                Debug.Log("Logging in!");
                 return new LoginCharacterList()
                 {
                     Characters = new List<LoginCharacter>()
@@ -34,6 +36,39 @@ namespace OpenTibiaUnity.Api
             {
                 Message = "Unauthorized"
             };
+        }
+
+        private bool sentLoginSucess = false;
+
+        private async Task StartLocalBackend(IBackendEventListener listener) {
+            while(true) {
+                if(!sentLoginSucess) {
+                    sentLoginSucess = true;
+                    listener.ReceiveEvent(new LoginSuccess()
+                    { 
+                        PlayerId = 1,
+                        BeatDuration = 1,
+                        CreatureSpeedA = 0.0f,
+                        CreatureSpeedB = 1.0f,
+                        CreatureSpeedC = 1.0f,
+                        
+                        BugReportsAllowed = true,
+                        
+                        CanChangePvPFrameRate = true,
+                        ExportPvPEnabled = true,
+                        StoreLink = "https://google.com",
+                        StorePackageSize = 20,
+                        ExivaRestrictions = true,
+                        TournamentActivated = false,
+                    });
+                }
+            }
+        }
+        public RegisterResult RegisterHandler(IBackendEventListener listener) {
+            Task.Run(() => {
+                StartLocalBackend(listener);
+            }).ConfigureAwait(false);
+            return new RegisterSuccess();
         }
     }
 }

@@ -51,7 +51,7 @@ namespace OpenTibiaUnity.Modules.Login
         
         protected ProtocolLogin _protocolLogin = null;
         protected LoginWebClient _loginWebClient = null;
-        protected IRafaeLealOpenTibiaSpecApi _openTibiaSpec = null;
+        // protected IRafaeLealOpenTibiaSpecApi _openTibiaSpec = null;
 
         protected Core.Components.PopupWindow _popupWindow;
         protected bool _popupIsMOTD = false;
@@ -77,7 +77,7 @@ namespace OpenTibiaUnity.Modules.Login
         protected override void Awake() {
             base.Awake();
 
-            _openTibiaSpec = new RafaeLealOpenTibiaSpecApiLocal();
+            // _openTibiaSpec = new RafaeLealOpenTibiaSpecApiLocal();
             // setup input
             OpenTibiaUnity.InputHandler.AddKeyDownListener(Core.Utils.EventImplPriority.High, OnKeyDown);
         }
@@ -552,7 +552,7 @@ namespace OpenTibiaUnity.Modules.Login
             gameObject.SetActive(clientVersion >= 1100);
             PopupCancel("Connecting", "Your character list is being loaded. Please wait.");
             
-            var loginResult = await _openTibiaSpec.Login(new LoginInfo()
+            var loginResult = await gameManager.OpenTibiaSpec.Login(new LoginInfo()
             {
                 AccountId = null,
                 Email = accountIdentifier,
