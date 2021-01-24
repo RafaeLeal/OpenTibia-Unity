@@ -15,6 +15,17 @@ namespace OpenTibiaUnity.Api
                     Characters = new List<LoginCharacter>()
                     {
                         new LoginCharacter()
+                        {
+                            Name = "José",
+                            Id = 1,
+                            WorldId = 1,
+                        },
+                        new LoginCharacter()
+                        {
+                            Name = "Maria",
+                            Id = 2,
+                            WorldId = 1,
+                        }
                     }
                 };
             }

@@ -11,8 +11,8 @@ namespace OpenTibiaUnity.Modules.Login
         {
             return new CharacterList.Character()
             {
-                Name = "José",
-                WorldId = 1
+                Name = loginCharacter.Name,
+                WorldId = (int)loginCharacter.WorldId
             };
         } 
         public static CharacterList toCommunicationLoginCharacterList(LoginCharacterList loginCharacterList)

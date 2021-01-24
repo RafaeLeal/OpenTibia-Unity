@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 
@@ -8,7 +9,9 @@ namespace OpenTibiaUnity.Api
 
     public class LoginCharacter
     {
-        
+       public string Name { get; set; }
+       public BigInteger Id { get; set; }
+       public BigInteger WorldId { get; set; }
     }
     
     public abstract class LoginResult { }
