@@ -1,6 +1,7 @@
 ﻿using System.Net.Sockets;
 using OpenTibiaUnity.Core.Communication.Types;
 using UnityEngine.Events;
+using UnityEngine;
 
 namespace OpenTibiaUnity.Core.Communication.Login
 {
@@ -130,6 +131,7 @@ namespace OpenTibiaUnity.Core.Communication.Login
         }
         
         protected void SendLogin() {
+            Debug.Log("ProtocolLogin.SendLogin/Begin");
             var message = _packetWriter.PrepareStream();
             message.WriteEnum(LoginclientMessageType.EnterAccount);
             message.WriteUnsignedShort((ushort)Utils.Utility.GetCurrentOs());
@@ -155,6 +157,7 @@ namespace OpenTibiaUnity.Core.Communication.Login
                 message.WriteUnsignedByte(0x00);
             
             int payloadStart = (int)message.Position;
+            Debug.Log("ProtocolLogin.SendLogin/payloadStart: " + payloadStart);
             if (gameManager.GetFeature(GameFeature.GameLoginPacketEncryption)) {
                 message.WriteUnsignedByte(0); // first byte must be zero
 
@@ -198,6 +201,7 @@ namespace OpenTibiaUnity.Core.Communication.Login
                 Cryptography.PublicRSA.EncryptMessage(message, payloadStart, Cryptography.PublicRSA.RSABlockSize);
             }
 
+            Debug.Log("ProtocolLogin.SendLogin/Finish");
             _packetWriter.FinishMessage();
             if (gameManager.GetFeature(GameFeature.GameLoginPacketEncryption)) {
                 _packetReader.XTEA = _xTEA;

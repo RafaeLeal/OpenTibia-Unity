@@ -100,9 +100,12 @@ namespace OpenTibiaUnity.Core.Communication.Game
         private void ParseChallange(Internal.CommunicationStream message) {
             uint timestamp = message.ReadUnsignedInt();
             byte challange = message.ReadUnsignedByte();
-
+            Debug.Log("Challenge timestamp: " + timestamp);
+            Debug.Log("Challenge challenge: " + challange);
             SendLogin(timestamp, challange);
+            Debug.Log("Sent Login");
             SetConnectionState(ConnectionState.ConnectingStage2, false);
+            Debug.Log("Parsed Challenge");
         }
     }
 }

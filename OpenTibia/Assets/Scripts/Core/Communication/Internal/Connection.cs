@@ -3,6 +3,7 @@ using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine.Events;
+using UnityEngine;
 
 namespace OpenTibiaUnity.Core.Communication.Internal
 {
@@ -208,9 +209,20 @@ namespace OpenTibiaUnity.Core.Communication.Internal
             if (stateObject.Finished) {
                 onConnectionSent.Invoke(new CommunicationStream(stateObject.AsyncBuffer));
                 lock (_packetQueue) {
-                    if (_packetQueue.Count >= 0) {
-                        InternalSend(_packetQueue.Dequeue() as CommunicationStream);
-                        return;
+                    if (_packetQueue.Count > 0) {
+                        try
+                        {
+                            var stream = _packetQueue.Dequeue() as CommunicationStream;
+                            InternalSend(stream);
+                            return;
+                        }
+                        catch(InvalidOperationException exception)
+                        {
+                            Debug.Log("InvalidOperationException");
+                            return;
+                        }
+                        //InternalSend(_packetQueue.Dequeue() as CommunicationStream);
+                        //return;
                     }
                 }
 

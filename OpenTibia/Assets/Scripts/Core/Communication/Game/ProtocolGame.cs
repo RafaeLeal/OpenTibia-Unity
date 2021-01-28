@@ -1,6 +1,7 @@
 ﻿using OpenTibiaUnity.Core.Communication.Types;
 using System.IO;
 using UnityEngine.Events;
+using UnityEngine;
 
 namespace OpenTibiaUnity.Core.Communication.Game
 {
@@ -89,6 +90,7 @@ namespace OpenTibiaUnity.Core.Communication.Game
         }
 
         protected override void OnConnectionEstablished() {
+            Debug.Log("OnConnectionEstablished/Begin");
             var gameManager = OpenTibiaUnity.GameManager;
 
             Inflater.Cleanup();
@@ -110,9 +112,11 @@ namespace OpenTibiaUnity.Core.Communication.Game
             }
 
             _connection.Receive();
+            Debug.Log("OnConnectionEstablished/Finish");
         }
 
         protected override void OnConnectionTerminated() {
+            Debug.Log("OnConnectionTerminated/Begin");
             base.OnConnectionTerminated();
             UnityAction action = () => {
                 if (_connectionState != ConnectionState.Game && _connectionState != ConnectionState.Pending) {
@@ -137,18 +141,24 @@ namespace OpenTibiaUnity.Core.Communication.Game
                 action.Invoke();
             else
                 OpenTibiaUnity.GameManager.InvokeOnMainThread(action);
+            Debug.Log("OnConnectionTerminated/Finish");
         }
         
         protected override void OnConnectionError(string message, bool disconnecting = false) {
+            Debug.Log("OnConnectionError: " + message);
             base.OnConnectionError(message, disconnecting);
             onConnectionError.Invoke(message, disconnecting);
+            Debug.Log("OnConnectionError/Finish");
         }
 
         protected override void OnConnectionSocketError(System.Net.Sockets.SocketError e, string message) {
+            Debug.Log("OnConnectionSocketError/Begin");
             OnConnectionError(message, true);
+            Debug.Log("OnConnectionSocketError/Finish");
         }
 
         protected override void OnCommunicationDataReady() {
+            Debug.Log("OnCommunicationDataReady/Begin");
             if (!_firstReceived) {
                 _firstReceived = true;
 
@@ -238,6 +248,7 @@ namespace OpenTibiaUnity.Core.Communication.Game
             }
 
             MessageProcessingFinished();
+            Debug.Log("OnCommunicationDataReady/Finish");
         }
         
         private void SetConnectionState(ConnectionState connectionState, bool dispatch = true) {
@@ -297,42 +308,53 @@ namespace OpenTibiaUnity.Core.Communication.Game
 
         private bool ParseMessage(GameserverMessageType messageType) {
             var gameManager = OpenTibiaUnity.GameManager;
+            Debug.Log("MessageType: " + messageType);
             switch (messageType) {
                 case GameserverMessageType.Login_PendingState:
+                    Debug.Log("GameserverMessageType.Login_PendingState");
                     if (gameManager.GetFeature(GameFeature.GameLoginPending))
                         SetConnectionState(ConnectionState.Pending);
                     else
                         ParseLoginSuccess(_inputStream);
                     break;
                 case GameserverMessageType.GMActions_ReadyForSecondaryConnection:
+                    Debug.Log("GameserverMessageType.GMActions_ReadyForSecondaryConnection");
                     if (gameManager.ClientVersion < 1100)
                         ParseGmActions(_inputStream);
                     else
                         ParseReadyForSecondaryConnection(_inputStream);
                     break;
                 case GameserverMessageType.WorldEntered:
+                    Debug.Log("GameserverMessageType.WorldEntered");
                     ParseWorldEntered(_inputStream);
                     break;
                 case GameserverMessageType.LoginError:
+                    Debug.Log("GameserverMessageType.LoginError");
                     ParseLoginError(_inputStream);
                     break;
                 case GameserverMessageType.LoginAdvice:
+                    Debug.Log("GameserverMessageType.LoginAdvice");
                     ParseLoginAdvice(_inputStream);
                     break;
                 case GameserverMessageType.LoginWait:
+                    Debug.Log("GameserverMessageType.LoginWait");
                     ParseLoginWait(_inputStream);
                     break;
                 case GameserverMessageType.LoginSuccess:
+                    Debug.Log("GameserverMessageType.LoginSuccess");
                     ParseLoginSuccess(_inputStream);
                     break;
                 case GameserverMessageType.LoginToken:
+                    Debug.Log("GameserverMessageType.LoginToken");
                     ParseLoginToken(_inputStream);
                     break;
                 case GameserverMessageType.StoreButtonIndicators:
+                    Debug.Log("GameserverMessageType.StoreButtonIndicators");
                     ParseStoreButtonIndicators(_inputStream);
                     break;
                 case GameserverMessageType.Ping:
                 case GameserverMessageType.PingBack: {
+                    Debug.Log("GameserverMessageType.Ping/PingBack");
                     if ((messageType == GameserverMessageType.Ping && gameManager.GetFeature(GameFeature.GameClientPing)) ||
                         (messageType == GameserverMessageType.PingBack && !gameManager.GetFeature(GameFeature.GameClientPing)))
                         ParsePingBack(_inputStream);
@@ -341,95 +363,121 @@ namespace OpenTibiaUnity.Core.Communication.Game
                     break;
                 }
                 case GameserverMessageType.Challenge:
+                    Debug.Log("GameserverMessageType.Challenge");
                     if (!gameManager.GetFeature(GameFeature.GameChallengeOnLogin))
                         goto default;
                     ParseChallange(_inputStream);
                     break;
                 case GameserverMessageType.Death:
+                    Debug.Log("GameserverMessageType.Death");
                     ParseDeath(_inputStream);
                     break;
                 case GameserverMessageType.Stash:
+                    Debug.Log("GameserverMessageType.Stash");
                     if (gameManager.ClientVersion < 1200)
                         goto default;
                     ParseSupplyStash(_inputStream);
                     break;
 
                 case GameserverMessageType.OTClientExtendedOpcode:
+                    Debug.Log("GameserverMessageType.OTClientExtendedOpcode");
                     ParseOtclientExtendedOpcode(_inputStream);
                     break;
                     
                 case GameserverMessageType.ClientCheck:
+                    Debug.Log("GameserverMessageType.ClientCheck");
                     if (gameManager.ClientVersion < 1121)
                         goto default;
                     ParseClientCheck(_inputStream);
                     break;
                 case GameserverMessageType.FullMap:
+                    Debug.Log("GameserverMessageType.FullMap");
                     ParseFullMap(_inputStream);
                     break;
                 case GameserverMessageType.MapTopRow:
+                    Debug.Log("GameserverMessageType.MapTopRow");
                     ParseMapTopRow(_inputStream);
                     break;
                 case GameserverMessageType.MapRightRow:
+                    Debug.Log("GameserverMessageType.MapRightRow");
                     ParseMapRightRow(_inputStream);
                     break;
                 case GameserverMessageType.MapBottomRow:
+                    Debug.Log("GameserverMessageType.MapBottomRow");
                     ParseMapBottomRow(_inputStream);
                     break;
                 case GameserverMessageType.MapLeftRow:
+                    Debug.Log("GameserverMessageType.MapLeftRow");
                     ParseMapLeftRow(_inputStream);
                     break;
                 case GameserverMessageType.FieldData:
+                    Debug.Log("GameserverMessageType.FieldData");
                     ParseFieldData(_inputStream);
                     break;
                 case GameserverMessageType.CreateOnMap:
+                    Debug.Log("GameserverMessageType.CreateOnMap");
                     ParseCreateOnMap(_inputStream);
                     break;
                 case GameserverMessageType.ChangeOnMap:
+                    Debug.Log("GameserverMessageType.ChangeOnMap");
                     ParseChangeOnMap(_inputStream);
                     break;
                 case GameserverMessageType.DeleteOnMap:
+                    Debug.Log("GameserverMessageType.DeleteOnMap");
                     ParseDeleteOnMap(_inputStream);
                     break;
                 case GameserverMessageType.MoveCreature:
+                    Debug.Log("GameserverMessageType.MoveCreature");
                     ParseCreatureMove(_inputStream);
                     break;
 
                 case GameserverMessageType.OpenContainer:
+                    Debug.Log("GameserverMessageType.OpenContainer");
                     ParseOpenContainer(_inputStream);
                     break;
                 case GameserverMessageType.CloseContainer:
+                    Debug.Log("GameserverMessageType.CloseContainer");
                     ParseCloseContainer(_inputStream);
                     break;
                 case GameserverMessageType.CreateInContainer:
+                    Debug.Log("GameserverMessageType.CreateInContainer");
                     ParseCreateInContainer(_inputStream);
                     break;
                 case GameserverMessageType.ChangeInContainer:
+                    Debug.Log("GameserverMessageType.ChangeInContainer");
                     ParseChangeInContainer(_inputStream);
                     break;
                 case GameserverMessageType.DeleteInContainer:
+                    Debug.Log("GameserverMessageType.DeleteInContainer");
                     ParseDeleteInContainer(_inputStream);
                     break;
 
                 case GameserverMessageType.InspectionList:
+                    Debug.Log("GameserverMessageType.InspectionList");
                     if (!gameManager.GetFeature(GameFeature.GameInspectionWindow))
                         goto default;
                     ParseInspectionList(_inputStream);
                     break;
                 case GameserverMessageType.InspectionState:
+                    Debug.Log("GameserverMessageType.InspectionState");
                     if (!gameManager.GetFeature(GameFeature.GameInspectionWindow))
                         goto default;
                     ParseInspectionState(_inputStream);
                     break;
                 case GameserverMessageType.SetInventory:
+                    Debug.Log("GameserverMessageType.SetInventory");
                     ParseSetInventory(_inputStream);
                     break;
                 case GameserverMessageType.DeleteInventory:
+                    Debug.Log("GameserverMessageType.DeleteInventory");
                     ParseDeleteInventory(_inputStream);
                     break;
                 case GameserverMessageType.NpcOffer:
+                    Debug.Log("GameserverMessageType.NpcOffer");
                     ParseNPCOffer(_inputStream);
                     break;
                 case GameserverMessageType.PlayerGoods:
+                    Debug.Log("GameserverMessageType.PlayerGoods");
                     ParsePlayerGoods(_inputStream);
                     break;
                 case GameserverMessageType.CloseNpcTrade:
@@ -803,15 +851,18 @@ namespace OpenTibiaUnity.Core.Communication.Game
                     ParseStoreOffers(_inputStream);
                     break;
                 default:
+                    Debug.Log("Unknown Message Type");
                     throw new System.Exception("unknown message type");
             }
             return true;
         }
 
         private void MessageProcessingFinished() {
+            Debug.Log("MessageProcessingFinished/Begin");
             WorldMapStorage.RefreshFields();
             MiniMapStorage.RefreshSectors();
             CreatureStorage.RefreshOpponents();
+            Debug.Log("MessageProcessingFinished/End");
         }
 
         public void OnCheckAlive() {

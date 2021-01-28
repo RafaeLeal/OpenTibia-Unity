@@ -89,6 +89,8 @@ namespace OpenTibiaUnity.Modules.Login
             _clientVersionDropdown.onValueChanged.AddListener(OnClientVersionDropdownValueChanged);
             _buildVersionDropdown.onValueChanged.AddListener(OnBuildVersionDropdownValueChanged);
 
+            _accountIdentifierInput.contentType = TMPro.TMP_InputField.ContentType.EmailAddress;
+
             // setup client versions
             var options = new System.Collections.Generic.List<TMPro.TMP_Dropdown.OptionData>();
             foreach (int version in OpenTibiaUnity.GetClientVersions())

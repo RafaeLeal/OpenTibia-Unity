@@ -1,6 +1,7 @@
 ﻿using OpenTibiaUnity.Core.Communication.Attributes;
 using OpenTibiaUnity.Core.Communication.Types;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace OpenTibiaUnity.Core.Communication.Game
 {
@@ -10,10 +11,12 @@ namespace OpenTibiaUnity.Core.Communication.Game
         private void SendProxyWorldNameIdentification() {
             var message = new Internal.CommunicationStream();
             message.WriteString(WorldName + "\n", true);
+            Debug.Log("SendProxyWorldNameIdentification");
             _connection.Send(message);
         }
         [ClientVersion(0)]
         public void SendLogin(uint challengeTimestamp, byte challengeRandom) {
+            Debug.Log("SendLogin/Begin");
             var message = _packetWriter.PrepareStream();
             message.WriteEnum(GameclientMessageType.PendingGame);
             message.WriteUnsignedShort((ushort)Utils.Utility.GetCurrentOs());
@@ -25,7 +28,9 @@ namespace OpenTibiaUnity.Core.Communication.Game
 
             if (gameManager.GetFeature(GameFeature.GameClientVersion))
                 message.WriteUnsignedInt((uint)gameManager.ClientVersion);
-
+            
+            // TODO: Enable this write only after 12.40.10030
+            message.WriteString(string.Format("{0}{1}", gameManager.ClientVersion, gameManager.BuildVersion));
             // TODO; use a dynamic value obtained from the spriteprovider instead of a statis once that
             // must be maintained within every update..
             if (gameManager.GetFeature(GameFeature.GameContentRevision))
@@ -70,18 +75,21 @@ namespace OpenTibiaUnity.Core.Communication.Game
             if (gameManager.GetFeature(GameFeature.GameLoginPacketEncryption))
                 Cryptography.PublicRSA.EncryptMessage(message, payloadStart, Cryptography.PublicRSA.RSABlockSize);
             
+            Debug.Log("SendLogin/Finish");
             _packetWriter.FinishMessage();
         }
         [ClientVersion(0)]
         public void SendEnterGame() {
             var message = _packetWriter.PrepareStream();
             message.WriteEnum(GameclientMessageType.EnterWorld);
+            Debug.Log("SendEnterGame");
             _packetWriter.FinishMessage();
         }
         [ClientVersion(0)]
         public void SendQuitGame() {
             var message = _packetWriter.PrepareStream();
             message.WriteEnum(GameclientMessageType.QuitGame);
+            Debug.Log("SendQuitGame");
             _packetWriter.FinishMessage();
         }
         [ClientFeature(GameFeature.GameClientPing)]
@@ -89,12 +97,14 @@ namespace OpenTibiaUnity.Core.Communication.Game
             // this function should only be called from protocolgame
             var message = _packetWriter.PrepareStream();
             message.WriteEnum(GameclientMessageType.Ping);
+            Debug.Log("InternalSendPing");
             _packetWriter.FinishMessage();
         }
         [ClientFeature(GameFeature.GameClientPing)]
         public void InternalSendPingBack() {
             var message = _packetWriter.PrepareStream();
             message.WriteEnum(GameclientMessageType.PingBack);
+            Debug.Log("InternalSendPingBack");
             _packetWriter.FinishMessage();
         }
         //[ClientFeature(GameFeature.PerformanceMetrics)] // 950?
@@ -108,6 +118,7 @@ namespace OpenTibiaUnity.Core.Communication.Game
             message.WriteUnsignedShort(maxFps);
             message.WriteUnsignedShort(averageFps);
             message.WriteUnsignedShort(fpsLimit);
+            Debug.Log("SendPerformanceMetrics");
             _packetWriter.FinishMessage();
         }
         [ClientVersion(0)]
@@ -140,6 +151,7 @@ namespace OpenTibiaUnity.Core.Communication.Game
                     i++;
                 }
             }
+            Debug.Log("SendGo");
 
             _packetWriter.FinishMessage();
         }
@@ -147,6 +159,7 @@ namespace OpenTibiaUnity.Core.Communication.Game
         public void SendStop() {
             var message = _packetWriter.PrepareStream();
             message.WriteEnum(GameclientMessageType.Stop);
+            Debug.Log("SendStop");
             _packetWriter.FinishMessage();
         }
         [ClientVersion(0)]
@@ -168,6 +181,7 @@ namespace OpenTibiaUnity.Core.Communication.Game
                 default:
                     throw new System.Exception("ProtocolGameSend.SendTurn: unknown direction: " + direction + ".");
             }
+            Debug.Log("SendTurn");
             _packetWriter.FinishMessage();
         }
         [ClientVersion(910)]
@@ -177,6 +191,7 @@ namespace OpenTibiaUnity.Core.Communication.Game
             message.WriteEnum(GameclientMessageType.EquipObject);
             message.WriteUnsignedShort(objectId);
             message.WriteUnsignedByte((byte)data);
+            Debug.Log("SendEquipObject");
             _packetWriter.FinishMessage();
         }
         [ClientVersion(0)]
@@ -191,6 +206,7 @@ namespace OpenTibiaUnity.Core.Communication.Game
             message.WriteUnsignedByte((byte)stackPos);
             message.WritePosition(destAbsolute);
             message.WriteUnsignedByte((byte)moveAmount);
+            Debug.Log("SendMoveObject");
             _packetWriter.FinishMessage();
         }
         [ClientFeature(GameFeature.GameNPCInterface)]
@@ -199,6 +215,7 @@ namespace OpenTibiaUnity.Core.Communication.Game
             message.WriteEnum(GameclientMessageType.LookInNpcTrade);
             message.WriteUnsignedShort(objectId);
             message.WriteUnsignedByte((byte)count);
+            Debug.Log("SendLookInNpcTrade");
             _packetWriter.FinishMessage();
         }
         [ClientFeature(GameFeature.GameNPCInterface)]
@@ -210,6 +227,7 @@ namespace OpenTibiaUnity.Core.Communication.Game
             message.WriteUnsignedByte((byte)amount);
             message.WriteBoolean(ignoreCapacity);
             message.WriteBoolean(buyWithBackpack);
+            Debug.Log("SendBuyObject");
             _packetWriter.FinishMessage();
         }
         [ClientFeature(GameFeature.GameNPCInterface)]
@@ -347,6 +365,7 @@ namespace OpenTibiaUnity.Core.Communication.Game
             message.WritePosition(absolute);
             message.WriteUnsignedShort((ushort)typeId);
             message.WriteUnsignedByte((byte)stackPos);
+            Debug.Log("SendToggleWrapState");
             _packetWriter.FinishMessage();
         }
         [ClientVersion(0)]
@@ -659,6 +678,7 @@ namespace OpenTibiaUnity.Core.Communication.Game
             message.WriteEnum(GameclientMessageType.GetOutfit);
             if (OpenTibiaUnity.GameManager.ClientVersion >= 1220)
                 message.WriteUnsignedByte(0);
+            Debug.Log("SendGetOutfit");
             _packetWriter.FinishMessage();
         }
         [ClientVersion(0)]
@@ -930,6 +950,7 @@ namespace OpenTibiaUnity.Core.Communication.Game
                 message.WriteUnsignedShort(appearance.Id);
                 message.WriteUnsignedByte((byte)appearance.Data);
             }
+            Debug.Log("SendGetObjectInfo");
             _packetWriter.FinishMessage();
         }
         [ClientFeature(GameFeature.GamePlayerMarket)]
