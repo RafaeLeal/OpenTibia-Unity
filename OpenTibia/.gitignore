@@ -4,6 +4,10 @@
 [Bb]uild/
 [Bb]uilds/
 Assets/AssetStoreTools*
+Assets/StreamingAssets/12*
+
+# JetBrains Rider
+Assets/Plugins/Editor/JetBrains/*.dll
 
 # Visual Studio cache directory
 .vs/
@@ -57,4 +61,8 @@ ehthumbs.db
 [Tt]humbs.db
 [Dd]esktop.ini
 
-Assets/StreamingAssets/12*
+# Opentibia
+*.otud
+*.otus
+*.otud.meta
+*.otus.meta

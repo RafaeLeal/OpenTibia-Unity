@@ -1,7 +1,9 @@
 ﻿using OpenTibiaUnity.Core.Communication.Types;
 using System.IO;
 using UnityEngine.Events;
+using OpenTibiaUnity.Api;
 using UnityEngine;
+
 
 namespace OpenTibiaUnity.Core.Communication.Game
 {
@@ -16,6 +18,49 @@ namespace OpenTibiaUnity.Core.Communication.Game
         Game,
     }
 
+    public class BackendListener : IBackendEventListener {
+        public ProtocolGame ProtocolGame { get; set; }
+        private void onLoginSuccess(LoginSuccess loginSuccess) {
+            OpenTibiaUnity.Player.Id = loginSuccess.PlayerId;
+
+            ProtocolGame.BeatDuration = loginSuccess.BeatDuration;
+            if (OpenTibiaUnity.GameManager.GetFeature(GameFeature.GameNewSpeedLaw)) {
+                Creatures.Creature.SpeedA = loginSuccess.CreatureSpeedA;
+                Creatures.Creature.SpeedB = loginSuccess.CreatureSpeedB;
+                Creatures.Creature.SpeedC = loginSuccess.CreatureSpeedC;
+            }
+
+            ProtocolGame.BugReportsAllowed = loginSuccess.BugReportsAllowed;
+            // if (OpenTibiaUnity.GameManager.ClientVersion >= 1054) {
+            //     bool canChangePvPFrameRate = message.ReadBoolean();
+            // }
+
+            // if (OpenTibiaUnity.GameManager.ClientVersion >= 1058) {
+            //     bool exportPvPEnabled = message.ReadBoolean();
+            // }
+            
+            // if (OpenTibiaUnity.GameManager.GetFeature(GameFeature.GameIngameStore)) {
+            //     string storeLink = message.ReadString();
+            //     ushort storePackageSize = message.ReadUnsignedShort();
+            // }
+
+            // if (OpenTibiaUnity.GameManager.ClientVersion >= 1149 && OpenTibiaUnity.GameManager.BuildVersion >= 6018) {
+            //     bool exivaRestrictions = message.ReadBoolean();
+            // }
+
+            // if (OpenTibiaUnity.GameManager.GetFeature(GameFeature.GameTournament)) {
+            //     bool tournamentActivated = message.ReadBoolean();
+            // }
+        }
+        public void ReceiveEvent(BackendEvent backendEvent) {
+            switch (backendEvent) {
+                case LoginSuccess loginSuccess:
+                    Debug.Log("ReceiveEvent/LoginSucess");
+                    onLoginSuccess(loginSuccess);
+                    break;
+            }
+        }
+    }
     public partial class ProtocolGame : Internal.Protocol
     {
         public class ConnectionError : UnityEvent<string, bool> {}
@@ -36,7 +81,7 @@ namespace OpenTibiaUnity.Core.Communication.Game
         private ConnectionState _connectionState = ConnectionState.Disconnected;
         private bool _firstReceived = false;
         private bool _connectionWasLost = false;
-        
+        private BackendListener _backendListener { get; set; }
         private System.Diagnostics.Stopwatch _pingTimer = new System.Diagnostics.Stopwatch();
         private int _pingReceived = 0;
         private int _pingSent = 0;
@@ -72,12 +117,15 @@ namespace OpenTibiaUnity.Core.Communication.Game
         }
 
         public override void Connect(string address, int port) {
+            _backendListener = new BackendListener();
+            var gameManager = OpenTibiaUnity.GameManager;
+            gameManager.OpenTibiaSpec.RegisterHandler(_backendListener);
             _pingTimer.Start();
 
-            BuildMessageModesMap(OpenTibiaUnity.GameManager.ClientVersion);
-            SetConnectionState(ConnectionState.ConnectingStage1);
+            // BuildMessageModesMap(OpenTibiaUnity.GameManager.ClientVersion);
+            // SetConnectionState(ConnectionState.ConnectingStage1);
 
-            base.Connect(address, port);
+            // base.Connect(address, port);
         }
 
         public override void Disconnect(bool dispatch = true) {
