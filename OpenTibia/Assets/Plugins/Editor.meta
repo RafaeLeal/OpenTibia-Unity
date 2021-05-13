@@ -1,6 +1,10 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:OpenTibia/Assets/StreamingAssets/1220.9108/appearances.otud.meta
+guid: 9c1acfca424f96d41854b07ec2a5e94f
+=======
 guid: 56a14a98a94b24afea7b256f7c502a21
 folderAsset: yes
+>>>>>>> origin/login1:OpenTibia/Assets/Plugins/Editor.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

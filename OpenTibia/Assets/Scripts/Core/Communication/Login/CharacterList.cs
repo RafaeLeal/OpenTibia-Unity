@@ -19,8 +19,8 @@ namespace OpenTibiaUnity.Core.Communication.Login
             public string Name;
         }
 
-        public List<World> Worlds { get; private set; } = new List<World>();
-        public List<Character> Characters { get; private set; } = new List<Character>();
+        public List<World> Worlds { get;  set; } = new List<World>();
+        public List<Character> Characters { get; set; } = new List<Character>();
 
         public int AccountState { get; private set; }
         public bool IsPremium { get; private set; }
